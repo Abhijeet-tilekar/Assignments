@@ -11,8 +11,6 @@ for( var i=0;i < n;i++)
         arr[i][j] = 0
     }
 }
-
-
 function print(arr) {
     for (var i = 0, len = arr.length; i < len; i++) {
         var tmp = ""
@@ -23,8 +21,6 @@ function print(arr) {
     }
     return { i, j }
 }
-//print(arr)
-
 function vert(arr,i,j)
 {
     var tmp = 0
@@ -34,7 +30,6 @@ function vert(arr,i,j)
     }
     return tmp
 }
-
 function hori(arr,i,j)
 {
     var tmp = 0
@@ -44,7 +39,6 @@ function hori(arr,i,j)
     }
     return tmp
 }
-
 function digo(arr,x,y)
 {
    var i = x
@@ -85,15 +79,6 @@ function digo(arr,x,y)
     
     return tmp
 }
-
-
-
-cnt = check(arr,0,0);
-    
-
-console.log("Solutions : "+cnt)
-
-
 function check(arr,i,j) {
     if (hori(arr, i, j) == 0 && vert(arr, i, j) == 0) {
         if (digo(arr, i, j) == 0) {
