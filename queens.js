@@ -1,11 +1,8 @@
+
 var n = 8
 var arr = []
 cnt =0 
 
-
-function getRndInteger(min,max) {
-    return Math.floor(Math.random() * (max - min + 1) ) + min;
-}
 for( var i=0;i < n;i++)
 {
     arr.push([0])       
@@ -15,7 +12,6 @@ for( var i=0;i < n;i++)
     }
 }
 
-arr[getRndInteger(0,n-1)][getRndInteger(0,n-1)] = 1
 
 function print(arr) {
     for (var i = 0, len = arr.length; i < len; i++) {
@@ -27,7 +23,7 @@ function print(arr) {
     }
     return { i, j }
 }
-print(arr)
+//print(arr)
 
 function vert(arr,i,j)
 {
@@ -91,25 +87,22 @@ function digo(arr,x,y)
 }
 
 
-for(var i=0;i<n;i++)
-{
-    for(var j=0;j<n;j++)
-    {
-        if(hori(arr,i,j) == 0 && vert(arr,i,j)==0)
+
+cnt = check(arr,0,0);
+    
+
+console.log("Solutions : "+cnt)
+
+
+function check(arr,i,j) {
+    if (hori(arr, i, j) == 0 && vert(arr, i, j) == 0) {
+        if (digo(arr, i, j) == 0) {
+            return 0 
+        }
+        else 
         {
-            
-            if(digo(arr,i,j)==0)
-            {
-                cnt += 1
-               
-                arr[i][j] = 1
-                console.log("\n")
-                print(arr)
-                
-            }
+            return 1
         }
     }
 }
-console.log("Solutions : "+cnt)
-
 
