@@ -6,7 +6,11 @@ var arr_col = arr[0].length
 var arr1_row = arr1.length
 var arr1_col = arr1[0].length
 var arr2  = []
+<<<<<<< HEAD
 //fgfgfgfgffgf
+=======
+//dfdfdfdfdfdggfgfgfgfgf
+>>>>>>> b8e20bb7d35f1f1a6ecf8a0efacf5159fa6f678a
 //console.log("Enter Array Dimenssion")
 for( var i=0;i < arr_row;i++)
 {
