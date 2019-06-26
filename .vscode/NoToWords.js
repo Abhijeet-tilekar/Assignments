@@ -43,10 +43,6 @@ function uniq(input,x) {            //check for uniq.pos < len
     else
     {
         y = parseInt(input[x]+"0")
-        if(input[x+1]==0)
-        {
-            return {sym: symdb[y],pos: x+1}
-        }
         return {sym: symdb[y],pos: x}
 
     }
@@ -56,9 +52,9 @@ function add_word(pos)
 {
     let tmp = 0
 
-    if(pos == 3 || pos == 4)
+    if(pos == 3)
     {
-        tmp = pos
+        tmp = 3
     }
     else
     {
@@ -75,11 +71,11 @@ function toWord(input)
     {   
         var cnt1 = ""
         var pos = input.length - i 
-            if(pos < 9 && (pos%4==0 || pos%3 == 0))
+        if(pos < 9 && (pos%4==0 || pos%3 == 0))
             {
                 cnt1 = add_word(pos)
             }
-            else
+        else
             {
                 cnt1 =""
             }
@@ -97,6 +93,7 @@ function toWord(input)
                 }
                 cnt += 1
                 tmp = tmp+"0"
+               // console.log("sfds")
             }
             if(f == 0)
             {
@@ -115,9 +112,9 @@ function toWord(input)
                 
                     out = out +" "+ symdb[tmp]
                     i = input.length 
-                    
+                    return out
                 }
-                return out
+             
             }
         
         }
@@ -132,8 +129,9 @@ function toWord(input)
         }
         else
         {
-            if(i<input.length)
+            if(pos>1)
             {
+                console.log(i)
                 out = out +" "+ symdb[parseInt(input[i])] + " "+cnt1
             }
             else
@@ -142,12 +140,12 @@ function toWord(input)
             }
         }
         
-        //console.log(i+" "+pos+" "+input[i]+" out: "+out)
+        console.log(i+" "+pos+" "+input[i]+" out: "+out)
     }
     return out
 }
 
-console.log(toWord("2300000"))
+console.log(toWord("1200012"))
 //validation
 //test cases 
 
