@@ -1,3 +1,8 @@
+/*
+    Neg No's
+    for x+9 0's eg 1,00,00,00,000
+    if in = string 
+*/
 var symdb = { 0:"Zero",1:"One",2:"Two",3:"Three",4:"Four",5:"Five",6:"Six",7:"Seven",8:"Eight",
               9:"Nine",10:"Ten",11:"Eleven",12:"Twelve",13:"Thirteen",14:"Fourteen",15:"Fifteen",16:"Sixteen",
               17:"Seventeen",18:"Eighteen",19:"Nineteen",20:"Twenty",30:"Thirty",40:"Fourty",50:"Fifty",60:"Sixty",
@@ -10,8 +15,21 @@ console.log("Enter Number : ")
 p_in.on("data",function(data)
 {
     var out = ""
+    var neg = 0
     var input = data.toString().slice(0,data.length-2)
+    if(input.length != parseInt(input).length)
+    {
+        console.log("Enter Number only !!")
+        process.exit()
+    }
+    if(input[0] =="-")              // if neg no 
+    {
+        input = input.slice(1,input.length)
+        neg = 1
+    }
     input = parseInt(input.replace(",","")).toString()
+    
+    console.log(input)
     var x = input.length
     if(input.length>9)
     {
@@ -33,6 +51,10 @@ p_in.on("data",function(data)
     else
     {
         out = toWord(input)
+    }
+    if(neg == 1)
+    {
+        out = "Negative " + out
     }
     out = out.split('  ').join(' ')
     console.log(out)
