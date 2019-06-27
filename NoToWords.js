@@ -19,12 +19,12 @@ p_in.on("data",function(data)
     {
         console.log("Zero")
     }
-    if(input.length>3)
+    if(input.length>3)          //Split into group of 3
     {
         var x = input.length
         while(x > 0)
         {
-            arr.push(input.slice(Math.max(x-3,0),x).toString())
+            arr.push(input.slice(Math.max(x-3,0),x).toString())             
             x = Math.max(x-3,0)
         }
         arr = arr.reverse()
@@ -101,4 +101,3 @@ function digit_3(input)                 //conver 3 digit
     return out      
 }
 
-//console.log(digit_3("998")+"\n")
