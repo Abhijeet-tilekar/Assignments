@@ -1,64 +1,51 @@
-/*
-    Neg No's
-    for x+9 0's eg 1,00,00,00,000
-    if in = string 
-*/
+
 var symdb = { 0:"Zero",1:"One",2:"Two",3:"Three",4:"Four",5:"Five",6:"Six",7:"Seven",8:"Eight",
-              9:"Nine",10:"Ten",11:"Eleven",12:"Twelve",13:"Thirteen",14:"Fourteen",15:"Fifteen",16:"Sixteen",
-              17:"Seventeen",18:"Eighteen",19:"Nineteen",20:"Twenty",30:"Thirty",40:"Fourty",50:"Fifty",60:"Sixty",
-              70:"Seventy",80:"Eighty",90:"Ninety","00":"Hundred","000":"Thousand","00000":"Lakh","0000":"Thousand","0000000":"Crore"}
+9:"Nine",10:"Ten",11:"Eleven",12:"Twelve",13:"Thirteen",14:"Fourteen",15:"Fifteen",16:"Sixteen",
+17:"Seventeen",18:"Eighteen",19:"Nineteen",20:"Twenty",30:"Thirty",40:"Fourty",50:"Fifty",60:"Sixty",
+70:"Seventy",80:"Eighty",90:"Ninety"}
+var ss_db  = {0:" ",1:"Thousand ",2:"Million",3:"Billion",2:"Million",3:"Billion",4:"Trillion",5:"Quadrillion",6:"Quintillion",7:"Sextillion",8:"Septillion",9:"Octillion",10:"Nonillion",11:"Decillion",12:"Undecillion",13:"Duodecillion",14:"Tredecillion",15:"Quattuordecillion",16:"Quindecillion",17:"Sexdecillion",18:"Septendecillion",19:"Octodecillion",20:"Novemdecillion",21:"Vigintillion",22:"Centillion"}
+var input = "1050000"
+var out = ""
 var p_in = process.stdin
 p_in.setEncoding('utf-8')
-console.log("Number to Words (Indian No System)")
+//console.log("Number to Words (Indian No System)")
 console.log("Enter Number : ")
 
 p_in.on("data",function(data)
 {
     var out = ""
-    var neg = 0
     var input = data.toString().slice(0,data.length-2)
-    if(input.length != parseInt(input).length)
+    var arr = []
+    if(input == 0)
     {
-        console.log("Enter Number only !!")
-        process.exit()
+        console.log("Zero")
     }
-    if(input[0] =="-")              // if neg no 
+    if(input.length>3)
     {
-        input = input.slice(1,input.length)
-        neg = 1
-    }
-    input = parseInt(input.replace(",","")).toString()
-    
-    console.log(input)
-    var x = input.length
-    if(input.length>9)
-    {
-        while(x > 0)  // To Split No into 9 digits (crore)
+        var x = input.length
+        while(x > 0)
         {
-            var tmp =  toWord(input.slice(Math.max(x-9,0),x).toString())
-            if(x<input.length)
-            {
-                out =  tmp+ " crore " + out 
-            }
-            else
-            {
-                out =tmp + out
-            }
-            
-            x = Math.max(x - 9,0)
+            arr.push(input.slice(Math.max(x-3,0),x).toString())
+            x = Math.max(x-3,0)
         }
+        arr = arr.reverse()
+       // console.log(arr)
     }
     else
     {
-        out = toWord(input)
+        arr.push(input)
     }
-    if(neg == 1)
+    for(let i=0;i<arr.length;i++)
     {
-        out = "Negative " + out
+        if(i < arr.length-1 && arr[i] != 0 )
+        {   
+            out = out + digit_3(arr[i].toString())+" "+ss_db[arr.length-i-1]+ " "
+        }
     }
     out = out.split('  ').join(' ')
-    console.log(out)
-}) 
+    console.log(out)   
+})
+
 function uniq(input,x) {        // convert 11-19, 20,30... 90 to words
     var y = parseInt(input[x] + input[x + 1]);
     if((y>9 && y<20) || y % 10 ==0)
@@ -74,149 +61,48 @@ function uniq(input,x) {        // convert 11-19, 20,30... 90 to words
 
     }
 }
-
-function add_word(pos) // index to Hundred/Thousand/Lakh/Crore
-{
-    if(pos>2)
-    {
-        let tmp = 0
-
-        if(pos == 3)
-        {
-            tmp = 3
-        }
-        else
-        {
-            tmp = pos - (pos%2)
-        }
-        return symdb[("0".repeat(tmp-1).toString())] 
-    }
-    else
-    {
-        return ""
-    }
-}
-
-
-function toWord(input)
+function digit_3(input)                 //conver 3 digit
 {
     var out = ""
-    for(var i=0;i<input.length;i++)
-    {   
-        var cnt1 = ""
-        var pos = input.length - i 
-        if(pos < 9 && (pos%4==0 || pos%3 == 0))    // to add 
-            {
-            
-                cnt1 = add_word(pos)
-  
-            }
-        else
-            {
-                cnt1 =""
-            }
-        
-        if(input[i]==0)   // if digits are 0's
+    for(let i =0;i<input.length;i++)
+    {
+        var pos = input.length - i
+        if(input[i] == 0)
         {
-            var f = 0
-            var cnt = 0
-            var tmp =""
-            for(var j=i;j<input.length;j++)
-            {
-                if(input[j]==0)
-                {
-                    if(f==0)
-                    {
-                        cnt += 1 
-                        tmp = tmp+"0"
-                    }
-                }
-                else
-                {
-                f = 1 
-                }
-            }
-            if(f == 0) // all 0 till last digit
-            {
-                if(tmp.length > 3 && tmp.length % 2 == 0) // ex 40,000 or 40,00,000
-                {
-                    tmp = tmp.slice(0,tmp.length - 1)
-                }
-                if(out =="") //if all 0 from first digit    
-                {
-                    out = symdb[0]
-                    i = input.length
-                }
-                else
-                { 
-                    if(i+(cnt-1)==input.length-1)
-                    {
-                        return out
-                    }
-                    out = out +" "+ symdb[tmp]
-                    i = input.length 
-                    return out
-                }
-            }
-            else        //change pos by no of 0's
-            {
-              i = i + (cnt -1)
-                pos = input.length - i
-            }
-        
+            
+            continue
         }
-        else if(pos==2 || pos > 3 && pos%2 ==1)  // To check for 11-19/20,30,40....90
+        if(pos==2)  // To check for 11-19/20,30,40....90
         { 
             if(uniq(input,i).pos == 1)
             {
-                cnt1 = add_word(pos)
-                out = out +" "+ uniq(input,i).sym.toString() +" "+cnt1
+                //cnt1 = add_word(pos)
+                out = out +" "+ uniq(input,i).sym.toString() 
                 i= i + 1
                 
             }
             else                        // for 0-9
             {
-                out = out +" "+ uniq(input,i).sym.toString() +" "+cnt1
+                out = out +" "+ uniq(input,i).sym.toString()
         
             }
-            
             if(i > input.length-1)
             {
                 break;
             } 
         }
+        else if(pos==3)
+        {
+            out = symdb[input[i]] + " Hundred"+out
+        }
         else
         {
-            if(pos>1)
-            {
-                out = out +" "+ symdb[parseInt(input[i])] + " "+cnt1 // append output
-        
-            }
-            else
-            {
-                out = out +" "+ symdb[parseInt(input[i])] 
-            }
+            out = out + " "+ symdb[input[i]]
         }
-        
+//        console.log(out)
+
     }
-    
-    return out
+    return out      
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+//console.log(digit_3("998")+"\n")
