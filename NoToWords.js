@@ -4,11 +4,10 @@ var symdb = { 0:"Zero",1:"One",2:"Two",3:"Three",4:"Four",5:"Five",6:"Six",7:"Se
 17:"Seventeen",18:"Eighteen",19:"Nineteen",20:"Twenty",30:"Thirty",40:"Fourty",50:"Fifty",60:"Sixty",
 70:"Seventy",80:"Eighty",90:"Ninety"}
 var ss_db  = {0:" ",1:"Thousand ",2:"Million",3:"Billion",2:"Million",3:"Billion",4:"Trillion",5:"Quadrillion",6:"Quintillion",7:"Sextillion",8:"Septillion",9:"Octillion",10:"Nonillion",11:"Decillion",12:"Undecillion",13:"Duodecillion",14:"Tredecillion",15:"Quattuordecillion",16:"Quindecillion",17:"Sexdecillion",18:"Septendecillion",19:"Octodecillion",20:"Novemdecillion",21:"Vigintillion",22:"Centillion"}
-var input = "1050000"
 var out = ""
 var p_in = process.stdin
 p_in.setEncoding('utf-8')
-//console.log("Number to Words (Indian No System)")
+
 console.log("Enter Number : ")
 
 p_in.on("data",function(data)
@@ -29,21 +28,21 @@ p_in.on("data",function(data)
             x = Math.max(x-3,0)
         }
         arr = arr.reverse()
-       // console.log(arr)
+       
     }
     else
     {
         arr.push(input)
     }
+    console.log(arr)
     for(let i=0;i<arr.length;i++)
     {
-        if(i < arr.length-1 && arr[i] != 0 )
+        if(arr[i] != 0 )
         {   
             out = out + digit_3(arr[i].toString())+" "+ss_db[arr.length-i-1]+ " "
         }
     }
-    out = out.split('  ').join(' ')
-    console.log(out)   
+    console.log("In Words  :"+out.split('  ').join(' '))   
 })
 
 function uniq(input,x) {        // convert 11-19, 20,30... 90 to words
@@ -69,7 +68,6 @@ function digit_3(input)                 //conver 3 digit
         var pos = input.length - i
         if(input[i] == 0)
         {
-            
             continue
         }
         if(pos==2)  // To check for 11-19/20,30,40....90
@@ -78,8 +76,7 @@ function digit_3(input)                 //conver 3 digit
             {
                 //cnt1 = add_word(pos)
                 out = out +" "+ uniq(input,i).sym.toString() 
-                i= i + 1
-                
+                i= i + 1   
             }
             else                        // for 0-9
             {
@@ -99,7 +96,6 @@ function digit_3(input)                 //conver 3 digit
         {
             out = out + " "+ symdb[input[i]]
         }
-//        console.log(out)
 
     }
     return out      
