@@ -8,9 +8,9 @@ var out = ""
 var p_in = process.stdin
 p_in.setEncoding('utf-8')
 
-console.log("Enter Number : ")
+console.log("Enter Number :")
 
-p_in.on("data",function(data)
+function test1(data)
 {
     var out = ""
     var input = data.toString().slice(0,data.length-2)
@@ -43,7 +43,26 @@ p_in.on("data",function(data)
         }
     }
     console.log("In Words  :"+out.split('  ').join(' '))   
-})
+}
+
+    p_in.on("data",function(data){
+        console.log(typeof(data)+" "+data[data.length-1]+" "+data)
+        //data = data.toString().slice(0,data.length-2)
+        //console.log("[",data,"]");
+        //data = data.trim()
+        if(data === 'exit\n')
+        {
+            process.exit();
+        }
+        else{
+            
+            test1(data); 
+            console.log("Enter Number : ")
+
+        }
+        
+    });
+
 
 function uniq(input,x) {        // convert 11-19, 20,30... 90 to words
     var y = parseInt(input[x] + input[x + 1]);
@@ -74,7 +93,6 @@ function digit_3(input)                 //conver 3 digit
         { 
             if(uniq(input,i).pos == 1)
             {
-                //cnt1 = add_word(pos)
                 out = out +" "+ uniq(input,i).sym.toString() 
                 i= i + 1   
             }
