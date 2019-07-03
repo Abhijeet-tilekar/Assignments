@@ -1,2 +1,1 @@
-var test = require('./test.js')
-console.log(test.log)
+const RL = require('readline-sync')
