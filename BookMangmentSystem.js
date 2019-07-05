@@ -1,6 +1,8 @@
 const FS = require('fs');
 const RL = require('readline-sync');
-const path = './books/'
+const path = './books/';
+var books = list_create();
+
 class b_node{
     constructor(line)
     {
@@ -15,7 +17,7 @@ class book{
         this.last = this.head;
         this.size = 0;
     }
-    append(line){
+    append_line(line){
         var node = new b_node(line);
         if(this.head == null){
             this.head = node;
@@ -25,33 +27,35 @@ class book{
         {
         this.last.next = node;
         this.last = node;
-        this.size++;
         }
+        this.size++;
     }
     insertAt(line,index)
     {
-        if(index > 0 && index > this.size)      //Line verification Error
+        if(index < 1 || index > this.size)      //Line verification Error
         {
             console.log("Line not found !! ");
-            return false;
+            return -1;
         }
         else
         {
+            index--;
             var node = new b_node(line);
             var pre,curr;
             curr = this.head;
             if(index == 0) // insert at start
             {
-                node.next = head;
+                node.next = this.head;
                 this.head = node;
             }
             else            //insert at index
             {
                 curr = this.head;
                 var i =0;
-                while(i<index-1)
+                while(i<index)
                 {
                     i++;
+                    //console.log(curr.line);
                     pre = curr;
                     curr = curr.next;
                 }
@@ -62,119 +66,319 @@ class book{
             
         }
     }
-    
-    del(index){
-        if(index < 0 && index > this.size){
+    del_line(index){
+        
+        if(index < 1 || index > this.size){
             console.log("Line not Found !! ");
-            return 0;
+            return -1;
         }
-        var i =0;
-        var curr,prev;
-        curr =this.head;
-        while(i < index-1){
-            i++;
-            prev = curr;
-            curr = curr.next;
+        else{
+            index--;
+            var curr,prev;
+            curr =this.head;
+            if((index)== 0){
+                this.head = curr.next;
+            }
+            else{
+                let i =0;
+                while(i < index){
+                    console.log(curr.line);
+                    i++;
+                    prev = curr;
+                    curr = curr.next;
+                }
+                prev.next = curr.next;
+                
+            }
+            this.size--;
         }
-        prev.next = curr.next;
-        this.size--;
-
     }
     store(){
-        if(FS.existsSync(path+this.name+".book")==false){
-            console.log("Book not Found !! ");
-            return 0;
-        }
         var curr = this.head;
-        while(curr){
-            Write(this.name,((curr == this.head)? '': '\n')+curr.line,(curr == this.head) ? 'w' : 'as+');
-            curr = curr.next;
+
+        if(exist(this.name)==true){
+            var i='w';    
+            while(curr){
+                writeToFile(this.name,curr.line,i)
+                i = 'as+';
+                curr = curr.next;
+            }
         }
+        else{
+            console.log("Book does not exits !!");
+        }
+        
     }
+    
     read(){
         var curr = this.head;
         var i =1;
-        while(curr){
-            console.log("["+i+"] "+curr.line);
-            curr = curr.next;i++;
+        if(FS.statSync(path+this.name+".book").size == 0){
+            return 0;
+        }
+        else{
+            while(curr){
+                console.log("["+i+"] "+curr.line);
+                curr = curr.next;i++;
+            }
         }
     }
 }
 
-function Write(name,line,f){
-
-    FS.writeFileSync(path+name+".book",line,{flag : f});
+function writeToFile(name,line,f){
+    if(exist(name) == true){
+        if(f == 'w'){
+            FS.writeFileSync(path+name+".book",line,{encoding:'utf-8',flag:f})    
+        }
+        else{
+            FS.writeFileSync(path+name+".book","\n"+line,{encoding:'utf-8',flag:f})
+        }
+    }
+    else{
+        return 1
+    }  
 }
 
 function create(name){
-    if(FS.existsSync(path+name+".book")==true){
-        console.log("File Already Exists ! ")
+    if(exist(name)==true){
+        console.log("Book Already Exists ! ")
         return 0
     }
     FS.writeFileSync(path+name+".book","",{flag:'w'})
+    books.set(name,"");
+    list_toFile(books);
+    books = list_create();
     console.log("Empty Book Created !!")
 }
 
 function fromFile(name){
     var tmp_book = new book(name);
-    FS.readFileSync(path+name+".book",{encoding:'utf-8'}).split('\n').forEach(element => {
-        tmp_book.append(element);
-    });
-    return tmp_book;
+    if(FS.existsSync(path+name+".book")==true){
+        var tmp = FS.readFileSync(path+name+".book",{encoding:'utf-8'}).split('\n')
+        for(let i=0;i<tmp.length;i++){
+            if(i==0 && tmp[0].length == 0){
+                continue;
+            }
+            tmp[i] =tmp[i].replace(/\r?\n|\r|'/g, "");
+            tmp_book.append_line(tmp[i]);
+        }
+        return tmp_book;
+    }
+    else{
+        console.log("Book Not Found !! ");
+        return 0;
+    }
+    
 }
 
-function list(){
-
-}
-
-function b_del(name){
-    if(FS.existsSync(path+name+".book")==false){
+function del(name){
+    if(exist(name)==false){
         console.log("Book Already Deleted !!");
+        return 0;
     }
     FS.unlinkSync(path+name+".book");
+    books.delete(name);
+    list_toFile(books);
+    book = list_create();
     console.log("Book Deleted !");
 }
 
 function b_read(name){
     console.log("Book : "+name+"\n");
-    fromFile(name).read();
+    var tmp = fromFile(name);
+    if(tmp != 0){
+        tmp.read();
+    }
+    else{
+        console.log("Book is Empty ")
+        return 0
+    }
+}
+function b_append(name){
+    var tmp_book = fromFile(name);
+    var ln = tmp_book.size;
+    console.log("Type '/e' to Stop writing ")
+    while(1){
+        ln++;
+        var tmp = RL.question("["+ln+"]: ").toString();
+        if(tmp == '/e'){
+            tmp_book.store();
+            break;
+        }
+        if(tmp_book.size == 0){
+            tmp_book.append_line(tmp);
+            tmp_book.store();
+            continue;
+        }
+        if(tmp.length>0){
+            tmp_book.append_line(tmp);
+        }
+    }
+}
+function b_insert(name,index,line){
+    var tmp_book = fromFile(name);
+    tmp_book.insertAt(line,index);
+    tmp_book.store();
+}
+
+function b_del(name,index){
+    var tmp_book = fromFile(name);
+    tmp_book.del_line(index);
+    tmp_book.store();
+}
+
+
+//Map list functions 
+function list_create(){
+    var books= new Map();
+    var list = FS.readdirSync(path).toString().match(/[a-zA-Z0-9\s_]+.book\b/g);
+    //console.log(list)
+    for(var i in list)
+    {
+        books.set(list[i].toString().slice(0,list[i].length-5),0);
+    }
+    list_toFile(books);
+    return books;
+}
+
+
+function list_fromFile(){
+    var tmp = JSON.parse(FS.readFileSync(path+"books.list"));
+    let list = new Map();
+    for (let k of Object.keys(tmp)) {
+        list.set(k, tmp[k]);
+    }
+    return list;
+}
+
+
+function list_toFile(list){
+    let obj = Object.create(null);
+    for (let [k,v] of list) {
+        obj[k] = v;
+    }
+    var tmp = JSON.stringify(obj);  
+    FS.writeFileSync(path+"books.list",tmp,{flag :'w'});
+}
+
+function list_print(){
+    var tmp = list_create();
+    var get_keys = tmp.keys();
+    console.log("Book List : \n");
+    var j =1;
+    for(let i of get_keys){
+        console.log("["+j+"] "+i);
+        j++;
+    }
+    list_toFile(tmp);
+}
+
+function exist(name){
+    var tmp = list_create();
+    list_toFile(tmp);
+    return tmp.has(name)
+}
+
+function list_search(name){
+    if(exist(name)==false){
+        console.log("Book Not Found !!");
+        return -1
+    }
+    console.log("Book Found !!");
+    b_read(name);
 }
 
 function menu(){
-    console.log("Menu : \n");
-    console.log("1.List Books :");
-    console.log("2.Read Book :");
-    console.log("3.Create Book :");
-    console.log("4.Delete Book :");
-    console.log("5.Append Line to Book :");
-    console.log("6.Insert Line in Book :");
-    console.log("7.Delete Line from Book :");
-    console.log("8.Exit :");
-    var ch = RL.question("Enter Choice : \n")
+    books = list_create();
+    console.log("\n \t\t\t : Menu : \n");
+    console.log("1.List Books \t\t 2.Read Book \t\t 3.Create Book"); 
+    console.log("4.Delete Book \t\t 5.Append Line \t\t 6.Insert Line ");
+    console.log("7.Delete Line  \t\t 8.Search Book \t\t 9.Exit ");
+    var ch = RL.question("\nEnter Choice : \n");
+    var name;
     switch(parseInt(ch)){
         case 1:
-
+            console.clear();
+            list_print();
+            RL.keyInPause();
+            console.clear();
+            menu();
             break;
         case 2:
-            b_read(RL.question("Enter Book Name to Read :\n"));
+            console.clear();
+            b_read(RL.question("Enter Book Name to Read (without extention) :\n"));
+            RL.keyInPause();
+            console.clear();
+            menu();
             break;
         case 3:
+            console.clear();
+            name = RL.question("Enter Book name to create (without extention)  : \n");
+            create(name);
+            RL.keyInPause();
+            console.clear();
+            menu();
             break;
         case 4:
+            console.clear()
+            del(RL.question("Enter Book name to Delete : \n"));
+            RL.keyInPause();
+            console.clear();
+            menu();
             break;
         case 5:
+            console.clear();
+            name = RL.question("Enter Book name for writing to : \n");
+            if(exist(name)==true){
+            b_append(name);
+            }
+            console.log("Book Not Found !!");
+            RL.keyInPause();
+            console.clear();
+            menu();
             break;
         case 6:
+            console.clear();
+            name = RL.question("Enter Book name for Inserting line to : \n");
+            b_read(name);
+            b_insert(name,RL.question("Enter Line no to Insert to : \n"),RL.question("Enter Line to Insert : \n"));
+            RL.keyInPause();
+            console.clear();
+            menu();
             break;
         case 7:
+            console.clear();
+            name = RL.question("Enter Book name for deleting line from : \n");
+            b_read(name);
+            b_del(name,RL.question("Enter line no to delete : \n"));
+            RL.keyInPause();
+            console.clear();
+            menu();
             break;
         case 8:
+            console.clear();
+            list_search(RL.question("Enter book name to Search : \n"));
+            RL.keyInPause();
+            console.clear();
+            menu();
+            break;    
+        case 9:
+            return 0;
             break;
+        default:
+            console.log("Enter Correct Choice : ")
+            console.clear();
+            menu();
     }
 }
 
+
 menu();
+
+
 /*
+
+Map for exits or not 
 create map for name : name/something
 map => json => json file
 imoprt at start 
@@ -187,3 +391,4 @@ DONE :
     loop in menu
     printing book 
     errors 
+    */
