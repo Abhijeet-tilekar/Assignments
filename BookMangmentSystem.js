@@ -82,7 +82,7 @@ class book{
             else{
                 let i =0;
                 while(i < index){
-                    console.log(curr.line);
+                    //console.log(curr.line);
                     i++;
                     prev = curr;
                     curr = curr.next;
@@ -231,7 +231,7 @@ function b_del(name,index){
 //Map list functions 
 function list_create(){
     var books= new Map();
-    var list = FS.readdirSync(path).toString().match(/[a-zA-Z0-9\s_]+.book\b/g);
+    var list = FS.readdirSync(path).toString().match(/[a-zA-Z0-9\s_\.]+.book\b/g);
     //console.log(list)
     for(var i in list)
     {
@@ -306,7 +306,13 @@ function menu(){
             break;
         case 2:
             console.clear();
-            b_read(RL.question("Enter Book Name to Read (without extention) :\n"));
+            name = RL.question("Enter Book Name to Read (without extention) :\n");
+            if(exist(name)==true){
+            b_read(name);
+            }
+            else{
+                console.log("Book Not Found !!");
+            }
             RL.keyInPause();
             console.clear();
             menu();
@@ -332,7 +338,9 @@ function menu(){
             if(exist(name)==true){
             b_append(name);
             }
+            else{
             console.log("Book Not Found !!");
+            }
             RL.keyInPause();
             console.clear();
             menu();
@@ -340,8 +348,13 @@ function menu(){
         case 6:
             console.clear();
             name = RL.question("Enter Book name for Inserting line to : \n");
+            if(exist(name)==true){
             b_read(name);
             b_insert(name,RL.question("Enter Line no to Insert to : \n"),RL.question("Enter Line to Insert : \n"));
+            }
+            else{
+            console.log("Book not Found !!")
+            }
             RL.keyInPause();
             console.clear();
             menu();
@@ -349,8 +362,13 @@ function menu(){
         case 7:
             console.clear();
             name = RL.question("Enter Book name for deleting line from : \n");
+            if(exist(name)==true){
             b_read(name);
             b_del(name,RL.question("Enter line no to delete : \n"));
+            }
+            else{
+                console.log("Book Not Found !!");                
+            }
             RL.keyInPause();
             console.clear();
             menu();
@@ -366,8 +384,8 @@ function menu(){
             return 0;
             break;
         default:
-            console.log("Enter Correct Choice : ")
             console.clear();
+            console.log("Enter Correct Choice!! ")
             menu();
     }
 }
