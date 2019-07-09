@@ -3,14 +3,14 @@ const RL = require('readline-sync');
 const path = './books/';
 var books = list_create();
 
-class b_node{
+class b_node{                           // Node = Line of Book
     constructor(line)
     {
         this.line = line;
         this.next = null;
     }
 }
-class book{
+class book{                             //LL as Book
     constructor(name){
         this.name = name;
         this.head = null;
@@ -125,7 +125,7 @@ class book{
     }
 }
 
-function writeToFile(name,line,f){
+function writeToFile(name,line,f){              //Write LL to .book File
     if(exist(name) == true){
         if(f == 'w'){
             FS.writeFileSync(path+name+".book",line,{encoding:'utf-8',flag:f})    
@@ -139,7 +139,7 @@ function writeToFile(name,line,f){
     }  
 }
 
-function create(name){
+function create(name){                          //Create empty .book file
     if(exist(name)==true){
         console.log("Book Already Exists ! ")
         return 0
@@ -151,7 +151,7 @@ function create(name){
     console.log("Empty Book Created !!")
 }
 
-function fromFile(name){
+function fromFile(name){                    // .book to LL
     var tmp_book = new book(name);
     if(FS.existsSync(path+name+".book")==true){
         var tmp = FS.readFileSync(path+name+".book",{encoding:'utf-8'}).split('\n')
@@ -171,7 +171,7 @@ function fromFile(name){
     
 }
 
-function del(name){
+function del(name){                             //Delete book
     if(exist(name)==false){
         console.log("Book Already Deleted !!");
         return 0;
@@ -183,7 +183,7 @@ function del(name){
     console.log("Book Deleted !");
 }
 
-function b_read(name){
+function b_read(name){                          //Imoprt and read book
     console.log("Book : "+name+"\n");
     var tmp = fromFile(name);
     if(tmp != 0){
@@ -194,7 +194,7 @@ function b_read(name){
         return 0
     }
 }
-function b_append(name){
+function b_append(name){                        // import append and export book
     var tmp_book = fromFile(name);
     var ln = tmp_book.size;
     console.log("Type '/e' to Stop writing ")
@@ -215,13 +215,13 @@ function b_append(name){
         }
     }
 }
-function b_insert(name,index,line){
+function b_insert(name,index,line){             //import insert line at index and export
     var tmp_book = fromFile(name);
     tmp_book.insertAt(line,index);
     tmp_book.store();
 }
 
-function b_del(name,index){
+function b_del(name,index){                     //import delete line at index and export
     var tmp_book = fromFile(name);
     tmp_book.del_line(index);
     tmp_book.store();
@@ -229,7 +229,7 @@ function b_del(name,index){
 
 
 //Map list functions 
-function list_create(){
+function list_create(){                         // Create map from .book files in dir and store it in list file
     var books= new Map();
     var list = FS.readdirSync(path).toString().match(/[a-zA-Z0-9\s_\.]+.book\b/g);
     //console.log(list)
@@ -242,7 +242,7 @@ function list_create(){
 }
 
 
-function list_fromFile(){
+function list_fromFile(){                       //import list file from dir 
     var tmp = JSON.parse(FS.readFileSync(path+"books.list"));
     let list = new Map();
     for (let k of Object.keys(tmp)) {
@@ -252,7 +252,7 @@ function list_fromFile(){
 }
 
 
-function list_toFile(list){
+function list_toFile(list){                 
     let obj = Object.create(null);
     for (let [k,v] of list) {
         obj[k] = v;
@@ -393,20 +393,3 @@ function menu(){
 
 menu();
 
-
-/*
-
-Map for exits or not 
-create map for name : name/something
-map => json => json file
-imoprt at start 
-reaplce exits with checking in map;
-
-
-DONE :
-    Formatting 
-    Wrong input 
-    loop in menu
-    printing book 
-    errors 
-    */
