@@ -145,30 +145,18 @@ function sugesstion(root){
 return sugg
 }
 
+//Line to map of between characters
 
-
-
-var arr = [['t','e',0,1],
-           [0,0,0,0],
-           ['e',0,0,0],
-           [0,0,0,0]];
-//Matrix to Word line  out : starting word, lenght of word + map with letter in between
-//for(let i=0;i<arr.length;i++){
-    out = ""
-    for(let j=0;j<arr[0].length;j++){
-        if(out.length == 0 && (arr[0][j] != 0 || arr[0][j] != 1)){
-            out = out + arr[0][j]
-        }
-        if(arr[0][j] != 0 && arr[0][j] != 1 && j != 0){
-            bet_char.set(j-1,arr[0][j])
+function bet_letters(line){
+    var out = new Map();                 //when line != 0000
+    for(let i=1;i<line.length;i++){
+        if(line[i] >= 'a' && line[i] <= 'z'){
+            out.set(i,line[i]);
         }
     }
-    console.log(out)
-    var tmp = bet_char.entries();
-    for(let i of tmp){
-        console.log(i);
-    }
-//}
+    return out;
+}
+
 var tree1 = new tree(null,"t",0)
 
 
@@ -186,7 +174,7 @@ var sugg = sugesstion(tree1.root)
 function print_matrix(arr){
     var rows = arr.length;
     var cols = arr[0].length;
-    for(let i=0;i<rows;i++){
+    for(let i=0;i<rows;i++){-7
         var out = ""
         for(let j=0;j<cols;j++){
             out = out +"|" + arr[i][j];
@@ -195,8 +183,56 @@ function print_matrix(arr){
         console.log("¯¯¯¯¯¯¯¯");
     }
 }
-print_matrix(arr)
 
+
+//Push Horizontal or vertical line in matrix add 1 from matrix
+/*function toMatrix(line,no,f){
+    if(line.length <= arr.length && line != 0){
+        if(f == 'h'){
+            var tmp = line.split('');
+            if(line.length < arr.length){
+                let i = line.length;
+                while(i < arr.length){
+                    tmp.push(arr[no-1][i]);
+                    i++;
+                }
+            }
+            arr[no-1] = tmp;
+        }
+        else{
+            var tmp = line.split('');
+            if(line.length < arr.length){
+                let i = line.length;
+                while(i < arr.length){
+                    tmp.push(arr[i][no-1]);
+                    i++;
+                }
+            }
+            for(let i=0;i<arr.length;i++){
+                arr[i][no-1] = tmp[i];
+            }
+        }
+    }
+}
+
+
+function toLine(arr,ln,f){
+        let rows = arr.length;
+        let colos = arr[0].length;
+        let out ="";
+        let tmp = ""
+        if(f == 'h'){
+            out = arr[ln-1].join('') 
+        }
+        else{
+            let i = 0;
+            while(i < arr.length){
+                out = out + arr[i][ln-1].toString();
+                i++;
+            }
+        }
+    return out;
+}*/
 
 
 
@@ -207,6 +243,12 @@ To do :
     Mapping Line to Tree
     Suggestions 
     Print Matrix
+    if 1st letter is blank
+
+
+    Get Details from line : 
+        length
+        between chars 
 
 Not Working :
         For words without starting letters 

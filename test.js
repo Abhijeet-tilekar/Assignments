@@ -159,6 +159,27 @@ To do :
     Mapping Line to Tree
     Suggestions 
 
+    
+
+var arr = [['t','e',0,1],
+           [0,0,0,0],
+           [1,0,0,0],
+           [0,0,0,0]];
         
     
 */
+
+out = ""
+for(let j=0;j<arr[0].length;j++){
+    if(out.length == 0 && (arr[0][j] != 0 || arr[0][j] != 1)){
+        out = out + arr[0][j]
+    }
+    if(arr[0][j] != 0 && arr[0][j] != 1 && j != 0){
+        bet_char.set(j-1,arr[0][j])
+    }
+}
+//console.log(out)
+var tmp = bet_char.entries();
+for(let i of tmp){
+    console.log(i);
+}
