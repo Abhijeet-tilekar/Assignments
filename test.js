@@ -1,12 +1,11 @@
 const FS = require('fs');
-//var writerStream = FS.createWriteStream('./tmp.txt');
-
+var bet_char = new Map();
 
 //Create Dictionary from JSON to Map
-var tmp = JSON.parse(FS.readFileSync("./dict.json"));
+var dict_r = JSON.parse(FS.readFileSync("./dict.json"));
 const dict_db = new Map();
-for (let k of Object.keys(tmp)) {
-    dict_db.set(k, tmp[k]);
+for (let k of Object.keys(dict_r)) {
+    dict_db.set(k, dict_r[k]);
 }
 
 
@@ -28,31 +27,31 @@ class tree{
     }
 }
 
-//Adding nodes
-function add_node(tmp,data,limit,siblings,char,lvl){
-    if(tmp.lvl > limit-1){
-        return 0
+
+//Adding nodes  (root tree,limit[length of word],char[if in word],[lvl on which char])
+function add_node(tree,limit,charMap){
+    if(tree.lvl > limit-1){
+        return 0;
     }
     else{
-        add_siblings(tmp,siblings,char,lvl);
-        for(let i=0;i<tmp.childs.length;i++){
-        add_node(tmp.childs[i],tmp.lvl+"."+data,limit,siblings,char,lvl)      // Add more childs 
+        add_siblings(tree,charMap);
+        for(let i=0;i<tree.childs.length;i++){
+            add_node(tree.childs[i],limit,charMap);      // Add more childs 
         }
     }
 }
 
 //Add 26 node chars or single char on same lvl
 
-function add_siblings(tree,no,char,lvl){
-   // let p = 0;
-    if(char != '' && tree.lvl == lvl){
-        tree.childs.push(new node(tree,/*tree.lvl+*/char,tree.lvl+1)) // push into childs[]
+function add_siblings(tree,charMap){
+    if(charMap.has(tree.lvl)){
+        tree.childs.push(new node(tree,charMap.get(tree.lvl),tree.lvl+1)) // push into childs[]
         tree.nc +=1;
     }
     else{
         var ch = 'a';
-        for(let i=0;i<no;i++){
-            tree.childs.push(new node(tree,/*"["+parseInt(tree.lvl+1)+"."+parseInt(i+1)+"."+p+"]"+*/String.fromCharCode(ch.charCodeAt(0) + i),tree.lvl+1)) // push into childs[]
+        for(let i=0;i<26;i++){
+            tree.childs.push(new node(tree,String.fromCharCode('a'.charCodeAt(0)+ i),tree.lvl+1)) // push into childs[]
             //p++;
             tree.nc +=1;
         }
@@ -127,59 +126,69 @@ function flat_arr(arr1) {                       //Un-nest array
 
 
 //Driver Function
-function sugesstion(root){
-    var tmp1 = s_last_nodes(tmp.root)
+function suggestion(root){
+    var tmp1 = s_last_nodes(root)
     var arr = leaf_to_words(flat_arr(tmp1))
+    
     var sugg = []
-    for(let i=0;i<arr.length;i++){                              //Wirting words to file
-            if(dict_db.has(arr[i].toString().split(',').reverse().join(""))){
-            sugg.push(arr[i].toString().split(',').reverse().join(""));
+    for(let i=0;i<arr.length;i++){
+           // console.log(arr[i].toString().split(',').reverse().join(""));                              //Wirting words to file
+        if(dict_db.has(arr[i].toString().split(',').reverse().join(""))){
+            console.log(arr[i].toString().split(',').reverse().join(""));
         }
         //writerStream.write(arr[i].toString().split(',').reverse().join("")+"\n",'UTF8');
     }
-return sugg
+}
+
+//Line to map of between characters
+function bet_letters(line){
+    var out = new Map();                 //when line != 0000
+    for(let i=1;i<line.length;i++){
+        if(line[i] >= 'a' && line[i] <= 'z'){
+            out.set(i,line[i]);
+        }
+    }
+    return out;
 }
 
 
-var tmp = new tree(null,"t",0)
-add_node(tmp.root,"",3,26,"",3);
-//print(tmp.root)
-console.log(sugesstion(tmp.root));
+//Function to starting with blank
+function Main(line){
+    var charMap = bet_letters(line);
+    //var nodeArr  = [];
+    if(line[0] == ' '){
+        for(let i=0;i<26;i++){
+            var nod = new tree(null,String.fromCharCode('a'.charCodeAt(0)+i),1)
+            add_node(nod.root,line.length,charMap);
+            suggestion(nod.root);
+            //nodeArr.push(nod);
+        }
+    }
+    else{
+        var nod = new tree(null,line[0],1);
+        add_node(nod.root,line.length,charMap);
+        suggestion(nod.root)
+    }
+}
 
-
-
-
+Main("         ");
 
 
 
 /*
 To do :
-    Taking 4x4 corssword matrix
-    Finding hori or vert line for sugesstion
-    Mapping Line to Tree
-    Suggestions 
+    Print tree 
 
-    
+    Validation of input :
+        No numbers allowed
+        lower case input
 
-var arr = [['t','e',0,1],
-           [0,0,0,0],
-           [1,0,0,0],
-           [0,0,0,0]];
+
+    Testing :
+        check perfomance for differnet length of inputs 
+
+    Optimization :
+        Better style for code
+        Optimize performance
         
-    
 */
-
-out = ""
-for(let j=0;j<arr[0].length;j++){
-    if(out.length == 0 && (arr[0][j] != 0 || arr[0][j] != 1)){
-        out = out + arr[0][j]
-    }
-    if(arr[0][j] != 0 && arr[0][j] != 1 && j != 0){
-        bet_char.set(j-1,arr[0][j])
-    }
-}
-//console.log(out)
-var tmp = bet_char.entries();
-for(let i of tmp){
-    console.log(i);
-}

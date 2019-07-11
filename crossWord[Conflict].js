@@ -177,13 +177,14 @@ function Main(line){
     }
     else{
         console.log("Suggestions : \n");
-        
-        
+        suggestion_arr.forEach(function(ele){
+            console.log(ele);
+        });
     }
 }
 
 
-Main("ca  ");
+Main("th  ");
 
 
 
