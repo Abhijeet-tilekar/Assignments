@@ -177,7 +177,7 @@ function Main(line){
     }
     else{
         console.log("Suggestions : \n");
-        
+
         
     }
 }
