@@ -1,5 +1,5 @@
 const FS = require('fs');
-var bet_char = new Map();
+const RL = require('readline-sync');
 
 //Create Dictionary from JSON to Map
 var dict_r = JSON.parse(FS.readFileSync("./dict.json"));
@@ -7,7 +7,6 @@ const dict_db = new Map();
 for (let k of Object.keys(dict_r)) {
     dict_db.set(k, dict_r[k]);
 }
-
 
 class node{
     constructor(parent,data,lvl){
@@ -27,7 +26,6 @@ class tree{
     }
 }
 
-
 //Adding nodes  (root tree,limit[length of word],char[if in word],[lvl on which char])
 function add_node(tree,limit,charMap){
     if(tree.lvl > limit-1){
@@ -42,7 +40,6 @@ function add_node(tree,limit,charMap){
 }
 
 //Add 26 node chars or single char on same lvl
-
 function add_siblings(tree,charMap){
     if(charMap.has(tree.lvl)){
         tree.childs.push(new node(tree,charMap.get(tree.lvl),tree.lvl+1)) // push into childs[]
@@ -124,7 +121,6 @@ function flat_arr(arr1) {                       //Un-nest array
     return arr1.reduce((acc, val) => Array.isArray(val) ? acc.concat(flat_arr(val)) : acc.concat(val), []);
  }
 
-
 //Print Suggestions
 function suggestion(root,suggestion_arr){
     var tmp1 = s_last_nodes(root)
@@ -151,51 +147,82 @@ function bet_letters(line){
 
 //Main Function
 function Main(line){
-    //Print line 
     var tmp_line = line.replace(' ','_');
     console.log("suggestions for Crossword Line : "+tmp_line+"\n");
-
     var charMap = bet_letters(line);
     suggestion_arr = [];
-    
     if(line[0] == ' '){
         for(let i=0;i<26;i++){
             var nod = new tree(null,String.fromCharCode('a'.charCodeAt(0)+i),1)
             add_node(nod.root,line.length,charMap);
             suggestion(nod.root,suggestion_arr);
         }
-
     }
     else{
         var nod = new tree(null,line[0],1);
         add_node(nod.root,line.length,charMap);
-        print(nod.root);    //Print tree example
         suggestion(nod.root,suggestion_arr);
+        if(RL.question("Print Tree ? (Y/N)") == ('y'||'Y')){
+            print(nod.root);
+        }
+          
     }
-    if(suggestion_arr.length == 1){
-        console.log("0 Suggestions !!")
-    }
-    else{
-        console.log("Suggestions : \n");
-
-        
-    }
+    print_suggestions(suggestion_arr);
 }
 
 
-Main("ca  ");
+function print_suggestions(suggestion_arr) {
+    if (suggestion_arr.length == 1) {
+        console.log("0 Suggestions !!");
+    }
+    else {
+        console.log("Suggestions : \n");
+        let out  = "";
+        for(let i=1;i<=suggestion_arr.length;i++){
+            out = out + suggestion_arr[i-1] +"\t\t"
+            if(i % 8 == 0){
+                console.log(out);
+                out ="";
+            }
+        }
+        console.log("Total Suggestions : "+suggestion_arr.length);
+    }
+}
 
+function driver(){
+    console.clear();
+    console.log("\t\t: CrossWord Solver :");
+    console.log("(Enter /e to exit) \n\n");
+    var input =RL.question("Enter Crossword Quiz Word (blank with spaces) : \n",{keepWhitespace:true}).toLowerCase();
+    if(input == '/e'){
+        process.exit();
+    }
+    if(/[a-zA-Z\s]/.test(input)){
+        Main(input);
+        RL.keyInPause();
+        console.clear();
+    }
+    else{
+        console.log("Enter Characters only  !! ");
+        RL.keyInPause();
+        console.clear();
+        driver();
+    }
+}
 
+while(1){
+driver();
+}
 
 /*
 To do :
     Dict word dict for cross word
     Print tree 
     Print no word found if no word found  **
-    print suggestions in good design
+    print suggestions in good design **
     Show input word before suggestions **
-    print no of suggestions
-    
+    print no of suggestions **
+     
 
     Validation of input :
         No numbers allowed
