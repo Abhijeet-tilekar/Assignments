@@ -1,4 +1,11 @@
-var rl = require('readline-sync');
-var tmp = rl.question("Enter : ",{keepWhitespace:true});
+const FS = require('fs');
+const RL = require('readline-sync');
 
-console.log(tmp," ",tmp.length);
+//Create Dictionary from JSON to Map
+var dict_r = JSON.parse(FS.readFileSync("./result.json"));
+const dict_db = new Map();
+for (let k of Object.keys(dict_r)) {
+    dict_db.set(k, dict_r[k]);
+}
+let enntries = dict_db.entries();
+console.log(dict_db.has("JAMISON"))

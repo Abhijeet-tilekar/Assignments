@@ -16,6 +16,5 @@ let bin_search =(arr,val) =>{
     return (arr[mid] != val)? "Not Found" : val+" Found At position:"+(mid+1);
 }
 (function (){
-    console.log("Binary Sort : \n",bin_search(RL.question("Enter Numbers(, separated ) : \n").split(",").sort(),RL.question("Enter Value to Search :\n")));
-    
+    console.log("Binary Sort : \n",bin_search(RL.question("Enter Numbers(, separated ) : \n").split(",").sort((a, b) => a - b),RL.question("Enter Value to Search :\n")));
 })();
