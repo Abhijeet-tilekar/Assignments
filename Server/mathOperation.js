@@ -122,5 +122,4 @@ let cube = (number) => {
     return response;
 }
 
-console.log(response_format());
 module.exports = {add, multiply, square, squareRoot, cube};
